@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ezequielito – Transformación 1 a 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #181818;
+    --gold: #d4a843;
+    --gold2: #f0c96a;
+    --white: #f5f0e8;
+    --muted: #888;
+    --radius: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG grain */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 60px 24px 80px;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(212,168,67,0.18) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-block;
+    border: 1px solid rgba(212,168,67,0.4);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 16vw, 130px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--white);
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  .hero h1 span {
+    display: block;
+    -webkit-text-stroke: 2px var(--gold);
+    color: transparent;
+  }
+
+  .hero-sub {
+    margin-top: 24px;
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 340px;
+    line-height: 1.6;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-cta {
+    margin-top: 40px;
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--black);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 32px;
+    border-radius: 100px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(212,168,67,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(212,168,67,0.5); }
+
+  .btn-outline {
+    border: 1.5px solid rgba(245,240,232,0.25);
+    color: var(--white);
+    font-weight: 500;
+    font-size: 14px;
+    padding: 14px 32px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+  /* SECTION */
+  section {
+    position: relative; z-index: 1;
+    padding: 80px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px, 8vw, 64px);
+    line-height: 1;
+    margin-bottom: 48px;
+  }
+
+  /* PLANES */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .plan-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    animation: fadeUp 0.6s ease both;
+  }
+  .plan-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212,168,67,0.35);
+  }
+
+  .plan-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #1e1a10 0%, #181818 100%);
+  }
+  .plan-card.featured::before {
+    content: 'MÁS POPULAR';
+    position: absolute; top: 16px; right: 16px;
+    font-size: 9px; letter-spacing: 2px;
+    background: var(--gold); color: var(--black);
+    font-weight: 700; padding: 4px 10px; border-radius: 100px;
+  }
+
+  .plan-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .plan-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .plan-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .plan-duration {
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .plan-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .plan-price span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .plan-includes {
+    margin-top: 20px;
+    list-style: none;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .plan-includes li {
+    font-size: 13px;
+    color: #bbb;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .plan-includes li::before {
+    content: '✓';
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .plan-btn {
+    display: block;
+    margin-top: 28px;
+    text-align: center;
+    background: transparent;
+    border: 1.5px solid rgba(212,168,67,0.4);
+    color: var(--gold);
+    padding: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .plan-btn:hover { background: var(--gold); color: var(--black); }
+  .plan-card.featured .plan-btn {
+    background: var(--gold); color: var(--black);
+  }
+  .plan-card.featured .plan-btn:hover { background: var(--gold2); }
+
+  /* RETO */
+  .reto-card {
+    background: linear-gradient(135deg, #1a1500 0%, #111 60%);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reto-card::after {
+    content: '🔥';
+    position: absolute;
+    right: 32px; top: 32px;
+    font-size: 48px;
+    opacity: 0.15;
+  }
+
+  .reto-tag {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--black);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    width: fit-content;
+  }
+
+  .reto-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+  }
+
+  .reto-title em {
+    font-style: normal;
+    -webkit-text-stroke: 1.5px var(--gold);
+    color: transparent;
+  }
+
+  .reto-desc {
+    font-size: 14px;
+    color: #aaa;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  .reto-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .reto-price-block .label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .reto-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 54px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .reto-price small {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* CONTACTO */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .contact-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    text-decoration: none;
+    color: var(--white);
+    display: flex; flex-direction: column; gap: 12px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .contact-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+
+  .contact-icon { font-size: 28px; }
+  .contact-name { font-weight: 700; font-size: 16px; }
+  .contact-handle { font-size: 13px; color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  footer strong { color: var(--gold); }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,168,67,0.2), transparent);
+    margin: 0 24px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL ANIMATE */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="badge">💪 Entrenamiento + Alimentación personalizada</div>
+  <h1>
+    Ezequielito
+    <span>Fitness</span>
+  </h1>
+  <p class="hero-sub">Planes de entrenamiento diseñados para tu cuerpo, tus metas y tu ritmo. Resultados reales.</p>
+  <div class="hero-cta">
+    <a href="#planes" class="btn-primary">Ver mis planes</a>
+    <a href="#contacto" class="btn-outline">Contáctame</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PLANES -->
+<section id="planes">
+  <p class="section-label reveal">Lo que ofrezco</p>
+  <h2 class="section-title reveal">Mis Planes</h2>
+
+  <div class="plans-grid">
+    <div class="plan-card reveal">
+      <span class="plan-icon">🏋️</span>
+      <div class="plan-name">Rutina de Gym</div>
+      <p class="plan-desc">Plan de entrenamiento completo adaptado a tu nivel y objetivos en el gimnasio.</p>
+      <div class="plan-duration">1 mes</div>
+      <div class="plan-price">RD$2,000 <span>/ mes</span></div>
+      <ul class="plan-includes">
+        <li>Rutina personalizada</li>
+        <li>Seguimiento semanal</li>
+        <li>Recomendaciones de alimentación</li>
+      </ul>
+      <a href="#contacto" class="plan-btn">¡Lo quiero!</a>
+    </div>
+
+    <div class="plan-card featured reveal">
+      <span class="plan-icon">🍑</span>
+      <div class="plan-name">Glúteos & Piernas</div>
+      <p class="plan-desc">Plan enfocado en glúteos, piernas y recomposición corporal. Resultados visibles garantizados.</p>
+      <div class="plan-duration">2 meses</div>
+      <div class="plan-price">RD$3,500 <span>/ 2 meses</span></div>
+      <ul class="plan-includes">
+        <li>Rutina enfocada en tren inferior</li>
+        <li>Plan de alimentación incluido</li>
+        <li>Recomposición corporal</li>
+        <li>Seguimiento mensual</li>
+      </ul>
+      <a href="#contacto" class="plan-btn">¡Lo quiero!</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RETO -->
+<section id="reto">
+  <p class="section-label reveal">¿Te atreves?</p>
+  <h2 class="section-title reveal">El Reto</h2>
+
+  <div class="reto-card reveal">
+    <span class="reto-tag">⭐ Más popular</span>
+    <div class="reto-title">
+      28 días<br><em>quema grasa</em>
+    </div>
+    <p class="reto-desc">
+      Reto de pérdida de grasa y recomposición corporal en 28 días. Todo lo que necesitas en un solo plan: alimentación, evaluación, seguimiento y rutinas de entrenamiento personalizadas.
+    </p>
+    <ul class="plan-includes" style="margin-top: 0;">
+      <li>Plan de alimentación personalizado</li>
+      <li>Evaluación física inicial</li>
+      <li>Seguimiento continuo</li>
+      <li>Rutinas de entrenamiento</li>
+    </ul>
+    <div class="reto-bottom">
+      <div class="reto-price-block">
+        <div class="label">Precio del reto</div>
+        <div class="reto-price">RD$2,500 <small>/ 28 días</small></div>
+      </div>
+      <a href="#contacto" class="btn-primary">Unirme al reto</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <p class="section-label reveal">¿Listo para empezar?</p>
+  <h2 class="section-title reveal">Contáctame</h2>
+
+  <div class="contact-grid">
+    <a href="https://wa.me/18094192269" target="_blank" class="contact-card reveal">
+      <div class="contact-icon">💬</div>
+      <div class="contact-name">WhatsApp</div>
+      <div class="contact-handle">809-419-2269</div>
+    </a>
+    <a href="https://www.instagram.com/medicenezequiel_" target="_blank" class="contact-card reveal">
+      <div class="contact-icon">📸</div>
+      <div class="contact-name">Instagram</div>
+      <div class="contact-handle">@medicenezequiel_</div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  Hecho con 💪 por <strong>Ezequielito Fitness</strong> · Transformación 1 a 1
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
